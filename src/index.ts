@@ -1,1 +1,1 @@
-export * from './lib/prettier-plugin-c';
+export * from './lib/plugin';

@@ -1,6 +1,7 @@
-import * as TreeSitter from 'tree-sitter';
-import * as C from 'tree-sitter-c';
-import type { Parser, ParserOptions, SupportLanguage } from 'prettier';
+import { SyntaxNode } from 'tree-sitter';
+import type { Parser, Printer, SupportLanguage } from 'prettier';
+import { parse } from './parser';
+import { print } from './printer';
 
 /**
  * Values taken from linguist file:
@@ -22,11 +23,9 @@ export const languages: SupportLanguage[] = [
   },
 ];
 
-export const parsers: Record<string, Parser<TreeSitter.SyntaxNode>> = {
+export const parsers: Record<string, Parser<SyntaxNode>> = {
   c: {
-    parse(text, options) {
-      throw new Error('Function not implemented.');
-    },
+    parse,
     astFormat: 'c',
     locStart(node) {
       return node.startIndex;
@@ -37,17 +36,8 @@ export const parsers: Record<string, Parser<TreeSitter.SyntaxNode>> = {
   },
 };
 
-const parser = new TreeSitter();
-parser.setLanguage(C);
-
-export function prettierPluginC(): string {
-  const source = `#include <stdio.h>
-int main(int argc, char *argv[]) {
-  printf("Hello, World!");
-  return 0;
-}
-`;
-  const tree = parser.parse(source);
-
-  return tree.rootNode.toString();
-}
+export const printers: Record<string, Printer<SyntaxNode>> = {
+  c: {
+    print,
+  },
+};
